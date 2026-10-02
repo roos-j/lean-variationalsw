@@ -16,6 +16,8 @@ Discrepancies: `automation/ErrorReport.md`.
   (`~/Dev/lean-spherical`, `~/Dev/lean-discretesw`, `~/Dev/lean-lt-carleson`, `~/Dev/lean-sparse`, …) by
   **copying** the needed files into `VariationalSW/Auto/` (adapted: one file per reusable theorem,
   namespace `Auto`, required header); no Lake dependency on them.
+- (R4, 2026-10-02T18:08:21-04:00, raw entry R4) One-off: remove the stray scratch file `T1.lean`, fix all compiler and linter
+  warnings, then commit and push again.
 - (R3, 2026-10-02T07:25:08-04:00, raw entry R3) Ask no further questions; decide autonomously and only stop when completely done.
 
 ## Source and targets
@@ -101,5 +103,7 @@ rescaled copies `T_{u,j}`; `A_s` = bound of `g ↦ ‖T_u g‖_{L²_u(I)}` on `L
   `eLpNorm_jumpFunction_dyadicSet_rpow_le` (Prop 1.4, in `Sec3LongJumpEstimates.lean`).
 - Latest full build 2026-10-02T16:05:19-04:00: `lake build` succeeded (8979 jobs); no `sorry`/`admit`/`axiom` in the project;
   `#print axioms` for both parts of Theorem 1.1, Prop 1.5 and Stein–Wainger: only propext, Classical.choice,
-  Quot.sound. Remaining warnings: three unused-variable warnings in the copied `SteinInterpolation.lean`.
+  Quot.sound.
+- 2026-10-02T18:11:39-04:00 (R4): removed `T1.lean`; removed unused hypotheses of private helpers in `SteinInterpolation.lean`;
+  normalized line endings to LF; `lake build` (8979 jobs) has no compiler or linter warnings; axioms unchanged.
 - Remaining per R1: the completion commit and push (done in the same session as this record).

@@ -2962,19 +2962,12 @@ private theorem memLp_simpleFunc_of_integrable
   exact fun y hy ↦
     (SimpleFunc.integrable_iff_finMeasSupp.mp hf).meas_preimage_singleton_ne_zero hy
 
-private theorem memLp_of_measurable_of_eLpNorm_le
-    {X : Type*} [MeasurableSpace X] {μ : Measure X} {p A : ENNReal} {u : X → ℂ}
-    (hu : Measurable u) (hbound : eLpNorm u p μ ≤ A) (hA : A < ⊤) : MemLp u p μ :=
-  hbound.trans_lt hA
-
 /-- An endpoint estimate on the integrable-simple-function core supplies the `MemLp` fact
 needed for subsequent duality arguments. -/
 private theorem output_memLp_of_bound
     {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
     {μ : Measure X} {ν : Measure Y} {p q : ENNReal} {M : ℝ}
     (T : SimpleFunc X ℂ → Y → ℂ)
-    (hT_measurable : ∀ (f : SimpleFunc X ℂ),
-      Integrable f μ → Measurable (T f))
     (hbound : ∀ (f : SimpleFunc X ℂ), Integrable f μ →
       eLpNorm (T f) q ν ≤ ENNReal.ofReal M * eLpNorm (f : X → ℂ) p μ)
     (f : SimpleFunc X ℂ) (hf : Integrable f μ) :
@@ -2990,15 +2983,13 @@ private theorem pairing_integrable_of_endpoint_bound
     {μ : Measure X} {ν : Measure Y} {p q : ENNReal} {M : ℝ}
     (hq : 1 ≤ q)
     (T : SimpleFunc X ℂ → Y → ℂ)
-    (hT_measurable : ∀ (f : SimpleFunc X ℂ),
-      Integrable f μ → Measurable (T f))
     (hbound : ∀ (f : SimpleFunc X ℂ), Integrable f μ →
       eLpNorm (T f) q ν ≤ ENNReal.ofReal M * eLpNorm (f : X → ℂ) p μ) :
     ∀ (f : SimpleFunc X ℂ) (g : SimpleFunc Y ℂ),
       Integrable f μ → Integrable g ν → Integrable (fun y ↦ T f y * g y) ν := by
   intro f g hf hg
   have : Fact (1 ≤ q) := ⟨hq⟩
-  have hTf : MemLp (T f) q ν := output_memLp_of_bound T hT_measurable hbound f hf
+  have hTf : MemLp (T f) q ν := output_memLp_of_bound T hbound f hf
   have hgLp : MemLp (g : Y → ℂ) (ENNReal.conjExponent q) ν :=
     g.memLp_of_finite_measure_preimage _ (SimpleFunc.integrable_iff.mp hg)
   change Integrable (T f * (g : Y → ℂ)) ν
@@ -4212,7 +4203,6 @@ private theorem endpoint_pairing_bound_normalized
     {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
     {μ : Measure X} {ν : Measure Y} {p q : ENNReal} {M : ℝ}
     (T : SimpleFunc X ℂ → Y → ℂ) (hq : 1 ≤ q) (hM : 0 ≤ M)
-    (hT_measurable : ∀ f : SimpleFunc X ℂ, Integrable f μ → Measurable (T f))
     (hbound : ∀ f : SimpleFunc X ℂ, Integrable f μ →
       eLpNorm (T f) q ν ≤ ENNReal.ofReal M * eLpNorm (f : X → ℂ) p μ)
     (f : SimpleFunc X ℂ) (g : SimpleFunc Y ℂ)
@@ -4250,8 +4240,6 @@ private theorem boundary_pairing_bound_normalized
     {μ : Measure X} {ν : Measure Y} {p q : ENNReal} {M : ℝ}
     (T : ℂ → SimpleFunc X ℂ → Y → ℂ) (z : verticalClosedStrip 0 1)
     (hq : 1 ≤ q) (hM : 0 ≤ M)
-    (hT_measurable : ∀ (z : verticalClosedStrip 0 1) (f : SimpleFunc X ℂ),
-      Integrable f μ → Measurable (T z f))
     (hbound : ∀ f : SimpleFunc X ℂ, Integrable f μ →
       eLpNorm (T z f) q ν ≤ ENNReal.ofReal M * eLpNorm (f : X → ℂ) p μ)
     (f : SimpleFunc X ℂ) (g : SimpleFunc Y ℂ)
@@ -4260,15 +4248,13 @@ private theorem boundary_pairing_bound_normalized
     (hgnorm : eLpNorm (g : Y → ℂ) q.conjExponent ν ≤ 1) :
     ‖∫ y, T z f y * g y ∂ν‖ ≤ M := by
   exact endpoint_pairing_bound_normalized (T z) hq hM
-    (hT_measurable z) hbound f g hf hg hfnorm hgnorm
+    hbound f g hf hg hfnorm hgnorm
 
 /-- A ready-to-use left-edge form of `boundary_pairing_bound_normalized`. -/
 private theorem left_boundary_pairing_bound_normalized
     {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
     {μ : Measure X} {ν : Measure Y} {p q : ENNReal} {M₀ : ℝ → ℝ}
     (T : ℂ → SimpleFunc X ℂ → Y → ℂ) (hq : 1 ≤ q)
-    (hT_measurable : ∀ (z : verticalClosedStrip 0 1) (f : SimpleFunc X ℂ),
-      Integrable f μ → Measurable (T z f))
     (hbound₀ : ∀ (t : ℝ) (f : SimpleFunc X ℂ), Integrable f μ →
       eLpNorm (T ((t : ℂ) * Complex.I) f) q ν ≤
         ENNReal.ofReal (M₀ t) * eLpNorm (f : X → ℂ) p μ)
@@ -4283,7 +4269,7 @@ private theorem left_boundary_pairing_bound_normalized
     constructor <;> simp⟩
   have hz : (z : ℂ) = (t : ℂ) * Complex.I := rfl
   rw [← hz]
-  exact boundary_pairing_bound_normalized T z hq (hM₀ t) hT_measurable
+  exact boundary_pairing_bound_normalized T z hq (hM₀ t)
     (hbound₀ t) f g hf hg hfnorm hgnorm
 
 /-- A ready-to-use right-edge form of `boundary_pairing_bound_normalized`. -/
@@ -4291,8 +4277,6 @@ private theorem right_boundary_pairing_bound_normalized
     {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
     {μ : Measure X} {ν : Measure Y} {p q : ENNReal} {M₁ : ℝ → ℝ}
     (T : ℂ → SimpleFunc X ℂ → Y → ℂ) (hq : 1 ≤ q)
-    (hT_measurable : ∀ (z : verticalClosedStrip 0 1) (f : SimpleFunc X ℂ),
-      Integrable f μ → Measurable (T z f))
     (hbound₁ : ∀ (t : ℝ) (f : SimpleFunc X ℂ), Integrable f μ →
       eLpNorm (T (1 + (t : ℂ) * Complex.I) f) q ν ≤
         ENNReal.ofReal (M₁ t) * eLpNorm (f : X → ℂ) p μ)
@@ -4307,7 +4291,7 @@ private theorem right_boundary_pairing_bound_normalized
     constructor <;> simp⟩
   have hz : (z : ℂ) = 1 + (t : ℂ) * Complex.I := rfl
   rw [← hz]
-  exact boundary_pairing_bound_normalized T z hq (hM₁ t) hT_measurable
+  exact boundary_pairing_bound_normalized T z hq (hM₁ t)
     (hbound₁ t) f g hf hg hfnorm hgnorm
 
 /-- The real part of the exponent in an input deformation along the left boundary. -/
@@ -6726,8 +6710,6 @@ private theorem normalized_pairing_bound_of_deformations
       Integrable f μ → Integrable g μ → T z (f + g) = T z f + T z g)
     (hT_smul : ∀ (z : verticalClosedStrip 0 1) (c : ℂ) (f : SimpleFunc X ℂ),
       Integrable f μ → T z (c • f) = c • T z f)
-    (hT_measurable : ∀ (z : verticalClosedStrip 0 1) (f : SimpleFunc X ℂ),
-      Integrable f μ → Measurable (T z f))
     (hpair_integrable : ∀ (z : verticalClosedStrip 0 1)
       (f : SimpleFunc X ℂ) (g : SimpleFunc Y ℂ),
       Integrable f μ → Integrable g ν → Integrable (fun y ↦ T z f y * g y) ν)
@@ -6795,7 +6777,7 @@ private theorem normalized_pairing_bound_of_deformations
   have hFbound₀ : ∀ t : ℝ, ‖F ((t : ℂ) * Complex.I)‖ ≤ M₀ t := by
     intro t
     dsimp only [F]
-    exact left_boundary_pairing_bound_normalized T hq₀ hT_measurable hbound₀
+    exact left_boundary_pairing_bound_normalized T hq₀ hbound₀
       (fun s ↦ (hM_pos s).1.le) t
       (f.map (φ ((t : ℂ) * Complex.I))) (g.map (ψ ((t : ℂ) * Complex.I)))
       (integrable_map_of_integrable f hf _ (hφzero _))
@@ -6804,7 +6786,7 @@ private theorem normalized_pairing_bound_of_deformations
   have hFbound₁ : ∀ t : ℝ, ‖F (1 + (t : ℂ) * Complex.I)‖ ≤ M₁ t := by
     intro t
     dsimp only [F]
-    exact right_boundary_pairing_bound_normalized T hq₁ hT_measurable hbound₁
+    exact right_boundary_pairing_bound_normalized T hq₁ hbound₁
       (fun s ↦ (hM_pos s).2.le) t
       (f.map (φ (1 + (t : ℂ) * Complex.I)))
       (g.map (ψ (1 + (t : ℂ) * Complex.I)))
@@ -6905,7 +6887,7 @@ theorem stein_interpolation_core
             (fun c hc ↦ norm_nonneg c)
         simpa only [K] using
           (normalized_pairing_bound_of_deformations T hq₀ hq₁ hθ hT_add hT_smul
-            hT_measurable hpair_integrable hanalytic hfamily_growth hM_measurable hM_pos
+            hpair_integrable hanalytic hfamily_growth hM_measurable hM_pos
             hM_growth hbound₀ hbound₁ f g hf hg (fun _ c ↦ c) (fun _ c ↦ c)
             (by intro z; rfl) (by intro z; rfl) hA hB
             (by
@@ -6961,7 +6943,7 @@ theorem stein_interpolation_core
             (fun c hc ↦ zero_le_one.trans (le_max_left _ _))
         simpa only [K] using
           (normalized_pairing_bound_of_deformations T hq₀ hq₁ hθ hT_add hT_smul
-            hT_measurable hpair_integrable hanalytic hfamily_growth hM_measurable hM_pos
+            hpair_integrable hanalytic hfamily_growth hM_measurable hM_pos
             hM_growth hbound₀ hbound₁ f g hf hg (fun _ c ↦ c) ψ
             (by intro z; rfl) (by intro z; simp [ψ]) hA hB
             (by
@@ -7031,7 +7013,7 @@ theorem stein_interpolation_core
             (fun c hc ↦ norm_nonneg c)
         simpa only [K] using
           (normalized_pairing_bound_of_deformations T hq₀ hq₁ hθ hT_add hT_smul
-            hT_measurable hpair_integrable hanalytic hfamily_growth hM_measurable hM_pos
+            hpair_integrable hanalytic hfamily_growth hM_measurable hM_pos
             hM_growth hbound₀ hbound₁ f g hf hg φ (fun _ c ↦ c)
             (by intro z; simp [φ]) (by intro z; rfl) hA hB
             (by
@@ -7108,7 +7090,7 @@ theorem stein_interpolation_core
             (fun c hc ↦ zero_le_one.trans (le_max_left _ _))
         simpa only [K] using
           (normalized_pairing_bound_of_deformations T hq₀ hq₁ hθ hT_add hT_smul
-            hT_measurable hpair_integrable hanalytic hfamily_growth hM_measurable hM_pos
+            hpair_integrable hanalytic hfamily_growth hM_measurable hM_pos
             hM_growth hbound₀ hbound₁ f g hf hg φ ψ
             (by intro z; simp [φ]) (by intro z; simp [ψ]) hA hB
             (by
@@ -7278,7 +7260,7 @@ theorem riesz_thorin_core
   · intro z f hf
     exact hT_measurable f hf
   · intro z f g hf hg
-    exact pairing_integrable_of_endpoint_bound hq₀ T hT_measurable hbound₀ f g hf hg
+    exact pairing_integrable_of_endpoint_bound hq₀ T hbound₀ f g hf hg
   · intro f g hf hg
     exact diffContOnCl_const
   · refine ⟨0, Real.pi_pos, ?_⟩
