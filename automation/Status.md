@@ -2,16 +2,95 @@
 # Status ledger
 
 Format: `status | exact source location | brief mathematical step | timestamp`.
-Source: arXiv:1710.10988v3, `sources/variational-sw.tex` (labels are TeX labels).
+Source: arXiv:1710.10988v3, `sources/variational-sw.tex` (labels are TeX labels). Route: see `instructions.md`.
 
 ## Main theorem statements (overview, not an execution order)
 
-not started | Thm 1.1 (`main`), estimate (`170614e1.2`) | `‖V^r{𝓗^{(u)}f : u ∈ ℝ}‖_p ≲ ‖f‖_p`, n ≥ 1, α > 1, r > 2, 1 < p < ∞, r > p'/n | 2026-10-02T07:22:00-04:00
-not started | Thm 1.1 (`main`), second display | `‖λ√N_λ{𝓗^{(u)}f : u ∈ ℝ}‖_p ≲ ‖f‖_p` uniformly in λ > 0, n ≥ 2, p > 2n/(2n-1) | 2026-10-02T07:22:00-04:00
+complete | Thm 1.1 (`main`), estimate (`170614e1.2`) | `‖V^r{𝓗^{(u)}f : u ∈ ℝ}‖_p ≲ ‖f‖_p`, n ≥ 1, α > 1, r > 2, 1 < p < ∞, r > p'/n | 2026-10-02T16:05:19-04:00
+complete | Thm 1.1 (`main`), second display | `‖λ√N_λ{𝓗^{(u)}f : u ∈ ℝ}‖_p ≲ ‖f‖_p` uniformly in λ > 0, n ≥ 2, p > 2n/(2n-1) | 2026-10-02T16:05:19-04:00
 
 ## Reusable prerequisites
 
-(None opened yet; each cited external result below becomes a section here when opened.)
+### Marcinkiewicz interpolation — `VariationalSW/Auto/MarcinkiewiczInterpolation.lean`
+Justification: needed for all weak-to-strong interpolations (§3, §4, Stein–Wainger); absent from Mathlib; named textbook theorem; sublinear operators on truncation-closed classes over general measure spaces; copied from lean-discretesw (user R2).
+
+complete | Marcinkiewicz interpolation theorem (Stein–Weiss V.2) | weak (a,a) + weak (b,b) ⇒ strong (p,p), sublinear; L^∞ endpoint variant | 2026-10-02T07:49:24-04:00
+
+### Hardy–Littlewood maximal theorem — `VariationalSW/Auto/HardyLittlewoodMaximal.lean`
+Justification: needed for (`est1`), (`est2`), Fefferman–Stein and CZ theory; absent from Mathlib; named textbook theorem; doubling metric measure spaces, Euclidean cube version; copied from lean-discretesw (user R2).
+
+complete | Hardy–Littlewood maximal theorem (Stein HA I.3) | weak (1,1) and L^p, p > 1 | 2026-10-02T07:49:24-04:00
+
+### Calderón–Zygmund theorem — `VariationalSW/Auto/CalderonZygmund.lean`
+Justification: needed for the p.v. operator, truncations and square functions (§3, Stein–Wainger); absent from Mathlib; named textbook theorem; convolution kernels on ℝⁿ with gradient and L²/Fourier bounds; copied from lean-discretesw (user R2).
+
+complete | Calderón–Zygmund theorem (Stein HA I.5) | weak (1,1) and L^p bounds for CZ convolution operators | 2026-10-02T07:49:24-04:00
+
+### Khintchine inequality — `VariationalSW/Auto/KhintchineInequality.lean`
+Justification: needed for the martingale square function (Lépingle, §2.1) and ℓ²-valued extensions; absent from Mathlib; named textbook theorem; Hilbert-space-valued, with Marcinkiewicz–Zygmund corollary; copied from lean-discretesw (user R2).
+
+complete | Khintchine inequality (Stein SI App. D) | upper/lower Rademacher moment bounds; ℓ²-valued extension of bounded operators | 2026-10-02T07:49:24-04:00
+
+### Riesz–Thorin and Stein interpolation — `VariationalSW/Auto/SteinInterpolation.lean`
+Justification: needed for interpolating single-scale and oscillatory-integral bounds (§4); absent from Mathlib; named textbook theorems; operators on simple functions between σ-finite spaces; copied from lean-spherical (user R2).
+
+complete | Riesz–Thorin theorem; Stein's analytic interpolation (Stein–Weiss V.1, V.4) | complex interpolation of L^p bounds | 2026-10-02T07:49:24-04:00
+
+### Lépingle's jump inequality — `VariationalSW/Auto/LepingleInequality.lean`
+Justification: needed for Prop 2.1 (JSW) hence Prop 1.4 and both parts of Thm 1.1; absent from Mathlib (no martingale jump/variation inequalities); a named theorem (Lépingle 1976, Pisier–Xu 1988); stated for the dyadic martingale on ℝⁿ, all 1 < p < ∞, uniform in λ.
+
+complete | Lépingle's inequality (JSW §2), dyadic martingale transforms | L² and weak (1,1) bounds for predictable martingale transforms | 2026-10-02T08:42:21-04:00
+complete | Lépingle's inequality, stopping-time reduction | `λ²N_λ ≲ ∑_k |E_{τ_k}f - E_{τ_{k-1}}f|²`, Khintchine | 2026-10-02T08:42:21-04:00
+complete | Lépingle's inequality | `‖λ√N_λ(E_j f)‖_p ≲ ‖f‖_p`, 1 < p < ∞ | 2026-10-02T08:42:21-04:00
+
+### Benedek–Calderón–Panzone theorem — `VariationalSW/Auto/VectorValuedCalderonZygmund.lean`
+Justification: needed for ℓ²-valued square functions (§3, JSW comparison, Littlewood–Paley), Fefferman–Stein and the Seeger-type bounds; absent from Mathlib and from the copied scalar CZ file; named textbook theorem (Grafakos §5.6); operator-valued integrable convolution kernels between Banach spaces, Hilbert-space duality for p ≥ 2.
+
+complete | Benedek–Calderón–Panzone, CZ decomposition for vector-valued f | weak (1,1) from L² bound + Hörmander condition | 2026-10-02T08:30:09-04:00
+complete | Benedek–Calderón–Panzone | strong (p,p), 1 < p ≤ 2 (Marcinkiewicz) | 2026-10-02T08:30:09-04:00
+complete | Benedek–Calderón–Panzone, Hilbert case | 2 ≤ p < ∞ by duality; finite ℓ²-valued square-function corollary | 2026-10-02T08:30:09-04:00
+
+### Carleson–Sjölin-type L⁴ estimate — `VariationalSW/Auto/CarlesonSjolin.lean`
+Justification: needed for Case 1 with n = 1 (replacing Thm 1.6 / Rogers–Seeger) and for the n = 1 Stein–Wainger single-scale maximal decay; absent from Mathlib; a named classical theorem (Carleson–Sjölin 1972, Hörmander 1973); stated for oscillatory integral operators `g ↦ ∫ e^{iλuΦ(x-y)} a(x-y,u) g(y) dy` on ℝ² with a nondegeneracy hypothesis.
+
+complete | Hörmander's L² lemma (Stein HA IX §1) | L² bound `λ^{-1/2}` | 2026-10-02T10:16:16-04:00
+complete | Carleson–Sjölin L⁴ argument (Stein HA IX §1) | `‖Tg‖₄ ≲ λ^{-1/2}(log λ)^C‖g‖₄` | 2026-10-02T10:16:16-04:00
+complete | interpolated L^q bounds | `2 ≤ q < ∞` | 2026-10-02T10:16:16-04:00
+
+### Fefferman–Stein vector-valued maximal inequality — `VariationalSW/Auto/FeffermanSteinInequality.lean`
+Justification: needed for (`est1`), (`est2`) and the §3 square functions without decay; absent from Mathlib; named textbook theorem (Stein HA II.1); ℓ²-valued, finite families, 1 < p < ∞, on ℝⁿ.
+
+complete | Fefferman–Stein, p ≤ 2 (CZ selection on |F|_ℓ², weak (1,1), Marcinkiewicz) | `‖(∑(Mf_i)²)^{1/2}‖_p ≲ ‖(∑|f_i|²)^{1/2}‖_p` | 2026-10-02T09:04:48-04:00
+complete | Fefferman–Stein weighted inequality, p ≥ 2 | `∫(Mf)²w ≲ ∫|f|²Mw`, duality | 2026-10-02T09:04:48-04:00
+
+### Jones–Seeger–Wright jump inequality for approximate identities — `VariationalSW/Auto/JonesSeegerWrightJumpInequality.lean`
+Justification: Prop 2.1 (cited JSW Thm 1.1) in the case used, (`eq:Sk_jump`); absent from Mathlib; a named theorem (Jones–Seeger–Wright 2008); stated for dilates `φ_j = 2^{jn}φ(2^j·)` of a Schwartz function with integral 1, all 1 < p < ∞, uniformly in λ.
+
+complete | JSW, comparison with the dyadic martingale | `‖(∑_j|φ_j*g - E_j g|²)^{1/2}‖_p ≲ ‖g‖_p` (L², weak (1,1), duality) | 2026-10-02T10:02:41-04:00
+complete | JSW Thm 1.1 for `σ = φ dx` | `‖λ√N_λ(φ_j*g)‖_p ≲ ‖g‖_p` from Lépingle and the jump comparison | 2026-10-02T10:02:41-04:00
+
+### Seeger's theorem on operators with localized bounds, vector-valued — `VariationalSW/Auto/SeegerLocalizedMultipliers.lean`
+Justification: replaces Prop 4.2 (`prop:Seeger88`, Seeger 1988 Thm 1, vector-valued variant of JSW p. 6737) in the form needed for Case 1 for all 1 < p < ∞ (the paper's version covers only p ≥ 2, see `ErrorReport.md`); absent from Mathlib; a named theorem; stated for dilated L²(U)-valued kernel families with L², L¹ (resp. L^∞) bounds and CZ-type tail/smoothness bounds.
+
+complete | Seeger-type theorem, 1 < p ≤ 2 | weak (1,1) with constant `≲ A₁ log(2+B/A₁) + A₂`, Marcinkiewicz | 2026-10-02T10:31:09-04:00
+complete | Seeger-type theorem, 2 ≤ p < ∞ | dual weak (1,1) with `A_∞`, duality | 2026-10-02T10:31:09-04:00
+
+### Interpolation of restricted strong type — `VariationalSW/Auto/RestrictedTypeInterpolation.lean`
+Justification: needed for Prop 1.5 at small p (replacing complex interpolation of `ℓ^r(V^r)`); absent from Mathlib; textbook theorem (Stein–Weiss V.3); sublinear nonnegative functionals on level-truncation-closed classes, σ-finite spaces.
+
+complete | Stein–Weiss V.3, restricted type interpolation | restricted strong type at p₀ < p₁ ⇒ strong type at p₀ < p < p₁ | 2026-10-02T09:22:12-04:00
+
+### Littlewood–Paley inequality — `VariationalSW/Auto/LittlewoodPaleyInequality.lean`
+Justification: needed for §3 (square functions with LP pieces Δ_k), (`est1`), (`est2`), and summing frequency-localized pieces in §4; absent from Mathlib; named textbook theorem (Stein SI IV.5); dilates of a mean-zero Schwartz function, finite index sets, 1 < p < ∞; with Stein's maximal-function majorization lemma.
+
+complete | Littlewood–Paley inequality (Stein SI IV.5) | `‖(∑_j|ψ_j*f|²)^{1/2}‖_p ≲ ‖f‖_p` | 2026-10-02T09:40:11-04:00
+complete | Stein SI III.2.2 | convolution with radially decreasing integrable majorant ≤ `A·Mf` | 2026-10-02T09:40:11-04:00
+
+### Decay estimates for oscillatory integrals — `VariationalSW/Auto/OscillatoryIntegralEstimates.lean`
+Justification: needed for Lemma 3.3 (`lem:ml`), the single-scale `A₂` bound (`eq:L2_mult_bound`) and Cases 2, 3 (`eq:multiplier_expansion2`); Mathlib has no multi-dimensional (non)stationary phase; textbook (Stein HA VIII §1–2); quantitative, uniform in parameters; strongly convex phases.
+
+complete | Stein HA VIII.1, nonstationary phase | `|∫e^{iΦ}a| ≲ μ^{-N}` when `|∇Φ| ≥ μ` | 2026-10-02T10:03:10-04:00
+complete | Stein HA VIII.2-type, strongly convex phase | `|∫e^{iΦ}a| ≲ λ^{-n/2}` (|m|² trick) | 2026-10-02T10:03:10-04:00
 
 ## Main proof ledger (forward logical order)
 
@@ -19,60 +98,39 @@ complete | §1, def. of `V^r` | `Auto.variationNorm` | 2026-10-02T07:22:00-04:00
 complete | §1, def. of `N_λ` | `Auto.jumpFunction` | 2026-10-02T07:22:00-04:00
 complete | §1, (`eq:CZ`) and mean-zero hypothesis | `Auto.IsHomogeneousCZKernel` | 2026-10-02T07:22:00-04:00
 complete | §1, (`eq:Hu_def`) | `Auto.modulatedSI` (p.v. limit of truncations) | 2026-10-02T07:22:00-04:00
-not started | §1, (`eq:Hu_def`) | existence of the p.v. limit for Schwartz `f` | 2026-10-02T07:22:00-04:00
-not started | §1, Thm 1.1 | measurability of `x ↦ V^r{𝓗^{(u)}f(x)}` and of the jump functional | 2026-10-02T07:22:00-04:00
-not started | §2.1, Prop 2.1 (`prop:Lepingle`), cited JSW Thm 1.1 | jump inequality for dyadic dilates of a measure with Fourier decay | 2026-10-02T07:22:00-04:00
-not started | §2.1, (`eq:Sk_jump`) | jump inequality for `S_k f` | 2026-10-02T07:22:00-04:00
-not started | §2.1, proof of (`eq:clSk_jump`) | `N_λ{S̃_k f} ≲ ∑_ℓ N_{2^{αℓ/2}λ}{S_k f}` | 2026-10-02T07:22:00-04:00
-not started | §2.1, (`eq:clSk_jump`) | jump inequality for `S̃_k f = ∑ c_ℓ S_{k-ℓ} f` | 2026-10-02T07:22:00-04:00
-not started | §2.2, (`eq:PP`), cited Plancherel–Pólya | `∑_j |F(j)|^r ≤ C_r ‖F‖_r^r` for band-limited `F` | 2026-10-02T07:22:00-04:00
-not started | §2.2, proof of Prop 2.2 | Bernstein: `‖F'‖_∞ ≲ ‖F‖_r`, `‖F‖_r ≲ ‖F‖_q` for band-limited `F` | 2026-10-02T07:22:00-04:00
-not started | §2.2, proof of Prop 2.2 | grouping of `u_1 < ⋯ < u_k` into unit intervals and mean-value bound | 2026-10-02T07:22:00-04:00
-not started | §2.2, Prop 2.2 (`PPinequality`) | `V^r{F} ≤ A_{q,r} λ^{1/q} ‖F‖_q` | 2026-10-02T07:22:00-04:00
-not started | §3, Lemma 3.2, cited CJRW Thm A | jump inequality for truncated singular integrals `H̃_{k,0}` | 2026-10-02T07:22:00-04:00
-not started | §3, decomposition (`eq:Hk0_decomp`) and following | `𝓗^{(2^{kα})} = H̃_{k,0} + ∑_ℓ H_{k,ℓ}` | 2026-10-02T07:22:00-04:00
-not started | §3, after (`eq:c_alpha_ell_def`) | `|c_ℓ| = O(2^{-αℓ})` by integration by parts | 2026-10-02T07:22:00-04:00
-not started | §3, Lemma 3.3 (`lem:ml`) | van der Corput bounds for `m_ℓ`, `m̃_ℓ` | 2026-10-02T07:22:00-04:00
-not started | §3, (`170713e3.12a`), (`170713e3.17a`) | pointwise square-sum multiplier bounds | 2026-10-02T07:22:00-04:00
-not started | §3, (`eq:HklSkdiff_sq_fnc_Delta`), (`eq:Hklfdiff_sq_fnc_Delta`), p = 2 | `L²` square function bounds with decay `2^{-γ(j+ℓ)}` | 2026-10-02T07:22:00-04:00
-not started | §3, `|H_{k,ℓ} f| ≲ Mf` and Fefferman–Stein | `L^p` square function bounds without decay, 1 < p < ∞ | 2026-10-02T07:22:00-04:00
-not started | §3, interpolation | (`eq:HklSkdiff_sq_fnc_Delta`), (`eq:Hklfdiff_sq_fnc_Delta`) for 1 < p < ∞ | 2026-10-02T07:22:00-04:00
-not started | §3, (`eq:sqfcna`), (`eq:sqfcnb`) | summed square function bounds | 2026-10-02T07:22:00-04:00
-not started | §3, Prop 3.1 (`eq:Hk_jump`) | long jump estimate | 2026-10-02T07:22:00-04:00
-not started | §1, Prop 1.4 (`main1`) | `‖λ N^{dyad}_{λ/3}(𝓗f)^{1/r}‖_p ≲ ‖f‖_p` | 2026-10-02T07:22:00-04:00
-not started | §7, Lemma 7.1 (`lem:FSsharp`) | Fefferman–Stein sharp function inequality, Banach-valued | 2026-10-02T07:22:00-04:00
-not started | §7, proof of Prop 4.2 | sharp-function estimates for `Tf` | 2026-10-02T07:22:00-04:00
-not started | §4.2 / §7, Prop 4.2 (`prop:Seeger88`) | vector-valued Seeger theorem with `A log(2+B/A)^{1/2-1/p}` | 2026-10-02T07:22:00-04:00
-not started | §4.1, (`eq:Hul`)–(`eq:decompk`) | decomposition `𝓗^{(u)} = ∑_{ℓ,k} 𝓗^{(u)}_{ℓ-j} P_{j+k}` | 2026-10-02T07:22:00-04:00
-not started | §4.2, (`est1`) | `≲ 2^{ℓα}‖f‖_p` via `V^1 ≤ Ẇ^{1,1}`, Fefferman–Stein, Littlewood–Paley | 2026-10-02T07:22:00-04:00
-not started | §4.2, (`est2`) | `≲ 2^{ℓ+k}2^{ℓα}‖f‖_p` via mean zero of the kernel | 2026-10-02T07:22:00-04:00
-not started | §4.3, (`eq:multiplier_expansion`), (`eq:multiplier_expansion2`) | stationary phase expansion of the multiplier | 2026-10-02T07:22:00-04:00
-not started | §4.4.1, (`eq:Lplqlq`) | Plancherel–Pólya reduction of `V^r_j` to `L^q_u` | 2026-10-02T07:22:00-04:00
-not started | §4.4.2, Fourier series in `u` | expansion of `χ(u)a(2^ℓξ,2^{ℓα}u)` | 2026-10-02T07:22:00-04:00
-not started | §4.1, Prop 4.1 (`LRSsquare`), cited Lee–Rogers–Seeger, part (1) n = 1 | square function estimate, n = 1, p ≥ 2 | 2026-10-02T07:22:00-04:00
-not started | §4.1, Prop 4.1 (`LRSsquare`), cited Lee–Rogers–Seeger, part (2) n ≥ 2 | square function estimate, p > 2(n+2)/n | 2026-10-02T07:22:00-04:00
-not started | §4.4.2, (`eq:square_fcn_Sect4`), (`eq:square_fcn_3`) | single-scale square function bounds | 2026-10-02T07:22:00-04:00
-not started | §4.4.3, (`eq:L2_mult_bound`) | `L²` single-scale bound `2^{-ℓαn/2}` | 2026-10-02T07:22:00-04:00
-not started | §4.4.3, Case 1, n ≥ 2 | `≲ 2^{-ℓαn/p}2^{ℓε}‖f‖_p` | 2026-10-02T07:22:00-04:00
-not started | §4.4.3, (`eq:squarefcn1`) | Case 1, n = 1: `≲ 2^{ℓε}‖f‖_p` | 2026-10-02T07:22:00-04:00
-not started | §1, Thm 1.6 (`180320thm1.6`), n = 1, cited Rogers–Seeger | local smoothing for `e^{it|D|^γ}` in dimension 1, some p < ∞ | 2026-10-02T07:22:00-04:00
-not started | §4.4.4, (`eq:localsmooth2`) | Case 1, n = 1, p = r > 4: `≲ 2^{-ℓα/p}‖f‖_p` | 2026-10-02T07:22:00-04:00
-not started | §4.4.4, (`eq:eachpiece`) | complex interpolation of mixed-norm spaces, Case 1, n = 1 | 2026-10-02T07:22:00-04:00
-not started | §4.5, Case 2 | `≲_N 2^{-(k+ℓ)N}‖f‖_p` | 2026-10-02T07:22:00-04:00
-not started | §4.5, Case 3 | `≲_N 2^{-ℓαN}‖f‖_p` | 2026-10-02T07:22:00-04:00
-not started | §4, (`eq:mainest`), (`eq:mainest_Sect4`) | short variation estimate under (`eq:cond_n1`) or (`eq:cond_n2`) | 2026-10-02T07:22:00-04:00
-not started | §5, Thm 5.2 (`thm5.2`), kernel bounds (`eqn:prop5.1.kernelest1`), (`eqn:prop5.1.kernelest2`) | pointwise bounds for `K_u^{(j)}` | 2026-10-02T07:22:00-04:00
-not started | §5, (`eqn:prop5.1.est1`) | `≲ (2^j r)^{-n/2} + 2^{-jβ}` | 2026-10-02T07:22:00-04:00
-not started | §5, (`eqn:prop5.1.maxest`), (`eqn:prop5.1.est2`) | `≲ 2^j r` | 2026-10-02T07:22:00-04:00
-not started | §5, Thm 5.2 (`thm5.2`) | `H¹ → L¹_x(L²_u)` bound | 2026-10-02T07:22:00-04:00
-not started | §5, Prop 5.1 (`170713prop5.1`) | square function estimate for 1 < p ≤ 2, n ≥ 2, via complex interpolation | 2026-10-02T07:22:00-04:00
-not started | §5, Case 1 with (`eq:square_fcn_4`) | Case 1 for 2n/(2n-1) < p ≤ 2 | 2026-10-02T07:22:00-04:00
-not started | §5, Cases 2, 3 | adaptation for 2n/(2n-1) < p ≤ 2 | 2026-10-02T07:22:00-04:00
-not started | §5, (`eq:mainest_Sect5`) | short variation estimate, n ≥ 2, 2n/(2n-1) < p ≤ 2, r ≥ 2 | 2026-10-02T07:22:00-04:00
-not started | §1, (`170712e1.5`), cited Stein–Wainger | maximal estimate `‖sup_u |𝓗^{(u)}f|‖_p ≲ ‖f‖_p`, p > 1 | 2026-10-02T07:22:00-04:00
-not started | §1, Prop 1.5 (`main2`) | `‖S_r(𝓗f)‖_p ≲ ‖f‖_p` (interpolation with Stein–Wainger) | 2026-10-02T07:22:00-04:00
-not started | §1, Lemma 1.3 | `λ N_λ^{1/r} ≲ S_r + λ (N^{dyad}_{λ/3})^{1/r}` | 2026-10-02T07:22:00-04:00
-not started | §1, Bourgain's jump-to-variation argument | from jump bounds to `V^r` bounds | 2026-10-02T07:22:00-04:00
-not started | §1, Thm 1.1, reduction from u ∈ ℝ to u > 0 | conjugation symmetry `u ↦ -u` | 2026-10-02T07:22:00-04:00
-not started | §1, Thm 1.1 (`main`), second display | jump estimate | 2026-10-02T07:22:00-04:00
-not started | §1, Thm 1.1 (`main`), (`170614e1.2`) | variation-norm estimate | 2026-10-02T07:22:00-04:00
+complete | §1, (`eq:Hu_def`); §4.1, (`eq:decompl`) | existence of the p.v. limit for Schwartz `f`; `𝓗^{(u)} = ∑_ℓ 𝓗^{(u)}_{ℓ-j}` | 2026-10-02T08:15:20-04:00
+complete | §1, Thm 1.1 | measurability of `x ↦ V^r{𝓗^{(u)}f(x)}` and of `λ√N_λ` | 2026-10-02T08:57:29-04:00
+complete | §2.1, proof of (`eq:clSk_jump`) | jump comparison `λ²N_λ(a) ≤ λ²N_{λ/3}(b) + 18∑|a_j - b_j|²` | 2026-10-02T08:57:29-04:00
+complete | §1, Lemma 1.3 | `λN_λ^{1/r} ≲ S_r + λ(N^{dyad}_{λ/3})^{1/r}` | 2026-10-02T08:57:29-04:00
+complete | §1, Thm 1.1 | splitting `u ∈ ℝ` at 0; `𝓗^{(-u)}f = conj 𝓗^{(u)}(conj f)`; continuity in u | 2026-10-02T08:57:29-04:00
+complete | §1, Thm 1.1 | long/short splitting `V^r ≲ S_r + V^r{dyadic}` | 2026-10-02T08:57:29-04:00
+complete | §2.2 / (`eq:Lplqlq`), replacement | embedding `V^q_J(F)^q ≲ ‖F‖^{q-1}_q‖F'‖_q + |J|^{-1}‖F‖_q^q`, and the sup analogue | 2026-10-02T10:09:48-04:00
+complete | §1, (`eq:Hu_def`), extension | difference operators `𝓗^{(u)}-𝓗^{(v)}` on L^p (L^{p'} kernels); lower semicontinuity and density extension of V^r, N_λ, S_r bounds | 2026-10-02T10:09:48-04:00
+complete | §1, Bourgain's jump-to-variation argument (JSW Lemma 2.1) | uniform jump bounds on an open p-interval ⇒ V^r bounds, r > 2 | 2026-10-02T10:09:48-04:00
+complete | §2.1, (`eq:Sk_jump`) | jump inequality for `S_k f` (bridge to the Jones–Seeger–Wright file) | 2026-10-02T12:23:09-04:00
+complete | §3, Lemma 3.2 (CJRW Thm A), smooth version | jumps of smooth truncations of the p.v. operator | 2026-10-02T12:23:09-04:00
+complete | §3, Lemma 3.3 (`lem:ml`) | bounds for `m_ℓ`, `m̃_ℓ` (smooth pieces) | 2026-10-02T12:23:09-04:00
+complete | §3, (`170713e3.12a`), (`170713e3.17a`) | pointwise square-sum multiplier bounds | 2026-10-02T12:23:09-04:00
+complete | §3, Fefferman–Stein step | `L^p` square function bounds without decay, 1 < p < ∞ | 2026-10-02T12:23:09-04:00
+complete | §3, (`eq:HklSkdiff_sq_fnc_Delta`), (`eq:Hklfdiff_sq_fnc_Delta`) | square function bounds with decay `2^{-γ(j+ℓ)}` | 2026-10-02T12:23:09-04:00
+complete | §3, Prop 3.1 (`eq:Hk_jump`) | long jump estimate | 2026-10-02T12:23:09-04:00
+complete | §1, Prop 1.4 (`main1`) | `‖λ N^{dyad}_{λ/3}(𝓗f)^{1/r}‖_p ≲ ‖f‖_p` | 2026-10-02T12:23:09-04:00
+complete | §4.1, (`eq:Hul`)–(`eq:decompk`) | decomposition into `𝓗^{(u)}_{ℓ-j}P_{j+k}` | 2026-10-02T13:27:19-04:00
+complete | §4.2, (`est1`) | `≲ 2^{ℓα}‖f‖_p` | 2026-10-02T13:27:19-04:00
+complete | §4.2, (`est2`) | `≲ 2^{ℓ+k}2^{ℓα}‖f‖_p` | 2026-10-02T13:27:19-04:00
+complete | §4.4.3, (`eq:L2_mult_bound`) | single-scale `A₂ ≲ 2^{-ℓαn/2}` (also for `∂_u`) | 2026-10-02T13:27:19-04:00
+complete | §4.4.2, (`eq:square_fcn_3`) at p = ∞; §5, (`eq:square_fcn_4`) at p = 1 | single-scale `A_∞ ≲ 2^{-ℓα/2}`, `A₁ ≲ 1` | 2026-10-02T13:27:19-04:00
+complete | §4.3, (`eq:multiplier_expansion2`) | nonstationary bounds for Cases 2, 3 | 2026-10-02T13:27:19-04:00
+complete | §4.4.3, Case 1, n ≥ 2 | `≲ ℓ^C 2^{-ℓα(n-1)/p}‖f‖_p` (p ≥ 2) | 2026-10-02T15:16:29-04:00
+complete | §5, Case 1 with (`eq:square_fcn_4`) | `≲ ℓ^C 2^{ℓα/2-ℓαn/p'}‖f‖_p` (2n/(2n-1) < p ≤ 2) | 2026-10-02T15:23:01-04:00
+complete | §4.4.4, Thm 1.6 replacement (n = 1) | `‖T_u g‖_{L⁴(ℝ×I)} ≲ λ^{-1/2}(log λ)^C‖g‖₄`, interpolated for 2 ≤ q < ∞ | 2026-10-02T15:16:29-04:00
+complete | §4.4.4, (`eq:localsmooth2`), (`eq:eachpiece`) | Case 1, n = 1, p, r > 2 | 2026-10-02T15:16:29-04:00
+complete | §4.5, Cases 2, 3; §5, Cases 2, 3 | rapidly decaying pieces | 2026-10-02T13:27:19-04:00
+complete | §4, (`eq:mainest_Sect4`); §5, (`eq:mainest_Sect5`) | `‖S_r(𝓗f)‖_p ≲ ‖f‖_p`: p > 2n/(2n-1), r ≥ 2 (n ≥ 2); p > 2, r > 2 (n = 1) | 2026-10-02T15:23:01-04:00
+complete | §1, (`170712e1.5`), Stein–Wainger, ℓ < 0 | Cotlar-type smooth truncation maximal bound | 2026-10-02T12:42:23-04:00
+complete | §1, (`170712e1.5`), Stein–Wainger, ℓ ≥ 0 | single-scale maximal decay and summation | 2026-10-02T16:05:19-04:00
+complete | §1, (`170712e1.5`) | `‖sup_u |𝓗^{(u)}f|‖_p ≲ ‖f‖_p`, 1 < p < ∞ | 2026-10-02T16:05:19-04:00
+complete | §1, Prop 1.5 (`main2`), interpolation step | small p via `S_r ≤ S_{r₀}^{r₀/r}S_∞^{1-r₀/r}`, Hölder, restricted type interpolation (conditional on (`eq:mainest_Sect4/5`), (`170712e1.5`)) | 2026-10-02T13:53:04-04:00
+complete | §1, Prop 1.5 (`main2`) | `‖S_r(𝓗f)‖_p ≲ ‖f‖_p`, r > p'/n, r > 2 (r ≥ 2 for n ≥ 2, p > 2n/(2n-1)) | 2026-10-02T16:05:19-04:00
+complete | §1, Thm 1.1 (`main`), second display | jump estimate | 2026-10-02T16:05:19-04:00
+complete | §1, Thm 1.1 (`main`), (`170614e1.2`) | variation-norm estimate | 2026-10-02T16:05:19-04:00

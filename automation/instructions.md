@@ -9,6 +9,14 @@ Discrepancies: `automation/ErrorReport.md`.
 - (R1, 2026-10-02T07:08:51-04:00, raw entry R1) Formalize the main result of arXiv:1710.10988
   ("the sharp variational Carleson"). Commit and push once after setting up the repository, and once more
   after completion. These are the only two authorized commits/pushes; no other history changes.
+  First commit/push done 2026-10-02: commit `219a73e` on `main`, pushed to `origin`
+  (`https://github.com/roos-j/lean-variationalsw.git`, remote added by the user; the remote also has a
+  `master` branch at the same commit, left untouched). Remaining: one commit+push after completion.
+- (R2, 2026-10-02T07:24:36-04:00, raw entry R2) Reuse code from the user's sibling projects
+  (`~/Dev/lean-spherical`, `~/Dev/lean-discretesw`, `~/Dev/lean-lt-carleson`, `~/Dev/lean-sparse`, …) by
+  **copying** the needed files into `VariationalSW/Auto/` (adapted: one file per reusable theorem,
+  namespace `Auto`, required header); no Lake dependency on them.
+- (R3, 2026-10-02T07:25:08-04:00, raw entry R3) Ask no further questions; decide autonomously and only stop when completely done.
 
 ## Source and targets
 
@@ -30,7 +38,14 @@ Discrepancies: `automation/ErrorReport.md`.
 - Lean project: library `VariationalSW` (`lakefile.toml`, default root), top-level import file
   `VariationalSW.lean`. Toolchain `leanprover/lean4:v4.35.0-rc3`, Mathlib tag `v4.35.0-rc3` (latest Mathlib
   tag including release candidates on 2026-10-02).
-- Main formalization file: `VariationalSW/Auto/SharpVariationNorm.lean`, namespace `Auto`.
+- Main formalization files (source-section split, decided 2026-10-02; the formalization will exceed 10,000 lines),
+  all namespace `Auto`, imported in this order:
+  `Sec1Introduction.lean` (§1 definitions and the elementary §1 lemmas: Lemma 1.3, splittings, extension to L^p,
+  Bourgain's argument; §2 replacement embedding), `Sec3LongJumpEstimates.lean` (§2.1 application (`eq:Sk_jump`) and
+  §3), `Sec4ShortJumpEstimatesLargeP.lean` (§4), `Sec5ShortJumpEstimatesSmallP.lean` (§5), and
+  `SharpVariationNorm.lean` (the §1 results proved last: Prop 1.4, Stein–Wainger (`170712e1.5`), Prop 1.5,
+  Theorem 1.1). §1 is split in two because its statements are proved from §3–§5 (acyclic imports); §2 has no
+  file because its content is used only through the reusable prerequisites and the §1 embedding lemma.
   Splits only per the skill's source-section rule (files named after the paper's sections) or the
   reusable-prerequisite rule (one file per substantial general theorem directly in `VariationalSW/Auto/`).
 - Header: copyright holder Joris Roos (user's git identity; author of the source), `Authors: Claude`.
@@ -39,12 +54,52 @@ Discrepancies: `automation/ErrorReport.md`.
 
 ## Settled decisions
 
+- Work organization (decided 2026-10-02 under R3): independent reusable prerequisites (separate files, distinct
+  textbook theorems) may be developed concurrently by subagents; the main file advances one ledger row at a time.
+  Subagents never edit `VariationalSW.lean` or run git; the orchestrator adds imports.
+
 - Lean definitions: `Auto.variationNorm`, `Auto.jumpFunction` (both `[0,∞]`-valued),
   `Auto.IsHomogeneousCZKernel` (Ω smooth off 0, homogeneous of degree 0, mean zero w.r.t.
   `volume.toSphere`), `Auto.modulatedSI` (p.v. limit of `∫_{|t|>ε}`).
 
+## Proof route (settled 2026-10-02; every departure from the paper is also in `ErrorReport.md`)
+
+Notation: `λ = 2^{ℓα}`; single-scale piece `T_u g(x) = ∫ e^{iλu|t|^α} φ₀(t)K(t) g(x-t) dt` (unit scale, u ∈ compact I),
+rescaled copies `T_{u,j}`; `A_s` = bound of `g ↦ ‖T_u g‖_{L²_u(I)}` on `L^s`.
+1. Combinatorics (§1): jump comparison `λ²N_λ(a) ≤ λ²N_{λ/3}(b) + 18∑|a_j-b_j|²`; Lemma 1.3; splitting `ℝ` at 0 and
+   `u ↦ -u` by conjugation; long/short splitting; `V^r ≤ (V^{r₀})^{r₀/r}(V^∞)^{1-r₀/r}`; Sobolev-type embedding
+   `V^q_J(F)^q ≲ ‖F‖_{L^q(J)}^{q-1}‖F'‖_{L^q(J)} + |J|^{-1}‖F‖_{L^q(J)}^q` (replaces Prop 2.2 / Plancherel–Pólya and
+   makes (`eq:Lplqlq`) rigorous); Bourgain/JSW jump-to-variation interpolation.
+2. Long jumps (§2–3), with smooth dyadic pieces `φ_{ℓ-j}` instead of sharp ones (the paper's `c_ℓ` vanish by the
+   mean-zero property): Lépingle's jump inequality for the dyadic martingale on ℝⁿ (stopping times → sampled
+   martingale; square function via Khintchine + dyadic martingale transforms, which are L²-bounded and weak (1,1)
+   by the dyadic CZ decomposition); square function `∑_j|φ_j*g - E_j g|²`; Prop 2.1 for `σ = φ dx` (`eq:Sk_jump`);
+   jumps of smooth truncations of the p.v. operator (replaces CJRW Lemma 3.2); Lemma 3.3; square functions with
+   decay (3.8)–(3.12) via L² + Fefferman–Stein + interpolation; Prop 3.1 ⇒ Prop 1.4.
+3. Short variations (§4–5): decomposition `ℓ, k`; (`est1`), (`est2`); single-scale bounds in physical space:
+   `A₁ ≲ 1` (Minkowski), `A_∞ ≲ λ^{-1/2}` (integrate in u first), `A₂ ≲ λ^{-n/2}` (`|m|²` trick + directional
+   integration by parts, strictly convex phase); same for `∂_u T_u` with an extra factor `λ`; Cases 2/3 by
+   nonstationary phase. Vector-valued Seeger-type theorem (replaces Prop 4.2, and repairs its use for p < 2 in §5):
+   for `p ≤ 2` weak (1,1) with constant `A₁ log(2+B/A₁)` + L² + Marcinkiewicz; for `p ≥ 2` the dual statement with
+   `A_∞`. Case 1, n ≥ 2: V²-embedding gives `2^{ℓα/2}·VV(p)`, `VV(p) ≲ ℓ^C 2^{-ℓαn/p'}` (p ≤ 2) resp.
+   `ℓ^C 2^{-ℓα/2-ℓα(n-1)/p}` (p ≥ 2): summable for `p > 2n/(2n-1)`. Case 1, n = 1: 1D Carleson–Sjölin/Hörmander
+   estimate `‖T_u g‖_{L⁴(ℝ×I)} ≲ λ^{-1/2}(log λ)^C‖g‖₄` (bilinear L² argument; replaces Thm 1.6 / Rogers–Seeger),
+   interpolated with L² and L^∞; then `(p,p)` via `V^p`-embedding, `r ≥ p` by monotonicity, `2 < r < p` by
+   log-convexity of mixed norms at fixed `p` between `(p,p)` and `(p,2)`. Section 5's Hardy-space argument is not used.
+4. Stein–Wainger (`170712e1.5`): `ℓ < 0` part by Cotlar-type smooth-truncation maximal bound; `ℓ ≥ 0`:
+   `‖sup_j sup_{u∈J_j}|H^{(u)}_{ℓ-j}f|‖_p`, trivially `≲ ‖Mf‖_p`, with decay at p = 2 (n ≥ 2: `A₂` + Sobolev in u) resp.
+   p = 4 (n = 1: L⁴ estimate + Sobolev in u), interpolated.
+5. Prop 1.5 for small p: pointwise `S_r ≤ S_{r₀}^{r₀/r} S_∞^{1-r₀/r}`, Hölder ⇒ restricted strong type, then
+   restricted-weak-type Marcinkiewicz (replaces complex interpolation of `ℓ^r(V^r)`).
+
 ## Current state and next step
 
-- 2026-10-02: repository set up; definitions compile. Next: open the ledger in order, starting with the
-  existence of the p.v. limit, then §2.
-- Latest full build: 2026-10-02, `lake build` succeeded. No theorems yet, so no axiom audit yet.
+- 2026-10-02T16:05:19-04:00: **COMPLETE.** Theorem 1.1 (`main`) is proved:
+  `Auto.IsHomogeneousCZKernel.thm_1_1_variation` (first part, (`170614e1.2`)) and
+  `Auto.IsHomogeneousCZKernel.thm_1_1_jump` (second part), in `VariationalSW/Auto/SharpVariationNorm.lean`; also
+  `IsHomogeneousCZKernel.main2` (Prop 1.5), `stein_wainger` ((`170712e1.5`)),
+  `eLpNorm_jumpFunction_dyadicSet_rpow_le` (Prop 1.4, in `Sec3LongJumpEstimates.lean`).
+- Latest full build 2026-10-02T16:05:19-04:00: `lake build` succeeded (8979 jobs); no `sorry`/`admit`/`axiom` in the project;
+  `#print axioms` for both parts of Theorem 1.1, Prop 1.5 and Stein–Wainger: only propext, Classical.choice,
+  Quot.sound. Remaining warnings: three unused-variable warnings in the copied `SteinInterpolation.lean`.
+- Remaining per R1: the completion commit and push (done in the same session as this record).

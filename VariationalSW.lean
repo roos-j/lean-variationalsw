@@ -5,6 +5,24 @@ Authors: Claude
 -/
 module
 
+public import VariationalSW.Auto.Sec1Introduction
+public import VariationalSW.Auto.Sec3LongJumpEstimates
+public import VariationalSW.Auto.Sec4ShortJumpEstimatesLargeP
+public import VariationalSW.Auto.Sec5ShortJumpEstimatesSmallP
+public import VariationalSW.Auto.MarcinkiewiczInterpolation
+public import VariationalSW.Auto.HardyLittlewoodMaximal
+public import VariationalSW.Auto.CalderonZygmund
+public import VariationalSW.Auto.KhintchineInequality
+public import VariationalSW.Auto.SteinInterpolation
+public import VariationalSW.Auto.VectorValuedCalderonZygmund
+public import VariationalSW.Auto.LepingleInequality
+public import VariationalSW.Auto.FeffermanSteinInequality
+public import VariationalSW.Auto.RestrictedTypeInterpolation
+public import VariationalSW.Auto.LittlewoodPaleyInequality
+public import VariationalSW.Auto.JonesSeegerWrightJumpInequality
+public import VariationalSW.Auto.OscillatoryIntegralEstimates
+public import VariationalSW.Auto.CarlesonSjolin
+public import VariationalSW.Auto.SeegerLocalizedMultipliers
 public import VariationalSW.Auto.SharpVariationNorm
 
 /-!
